@@ -188,6 +188,11 @@ defc    ERR_NR  = $4000         ;    1  16384
                                 ;       mess up the display file.
 defc    FLAGS   = $4001         ;   X1  16385
                                 ;       Various flags to control the BASIC system.
+                                ;       bit 0: 1 surpress leading space
+                                ;       bit 1: 0 output to display; 1 to printer
+                                ;       bit 2: 0 K mode, 1 L mode
+                                ;       bit 6: 0 numeric result, 1 string result
+                                ;       bit 7: 0 syntax check, 1 run
 defc    ERR_SP  = $4002         ;   X2  16386
                                 ;       Address of first item on machine stack
                                 ;       (after GOSUB returns).
@@ -259,6 +264,12 @@ defc    S_TOP   = $4023         ;   S2  16419
                                 ;       automatic listings.
 defc    LAST_K  = $4025         ;  SN2  16421
                                 ;       Shows which keys pressed.
+                                ;       The low byte (L) identifies the keyboard
+                                ;       row (horizontal zone).
+                                ;       The high byte (H) identifies the
+                                ;       keyboard column group (vertical zone).
+                                ;       Bits are normally set; the bit
+                                ;       corresponding to a pressed key is reset
 defc    DB_ST   = $4027         ;  SN1  16423
                                 ;       Debounce status of keyboard.
 defc    MARGIN  = $4028         ;  SN1  16424
@@ -1447,7 +1458,7 @@ SAVE:
         call    NAME            ; routine NAME
         jr      c, REPORT_F     ; back with null name to REPORT-F above.
 
-        ex      de, hl          ;
+        ex      de, hl          ; HL=address of name
         ld      de, $12CB       ; five seconds timing value
 
 HEADER:
@@ -1676,22 +1687,22 @@ REPORT_D:
 NAME:
         call    SCANNING        ; routine SCANNING
         ld      a, (FLAGS)      ; sv FLAGS
-        add     a, a            ;
-        jp      m, REPORT_C     ; to REPORT-C
+        add     a, a            ; bit 6 -> sign bit: Numeric or String result
+        jp      m, REPORT_C     ; to REPORT-C; was 1, String result
 
-        pop     hl              ;
-        ret     nc              ;
+        pop     hl              ; return to caller of SAVE
+        ret     nc              ; bit 7 -> carry; 0=syntax check only
 
-        push    hl              ;
+        push    hl              ; restore return address
         call    SET_FAST        ; routine SET-FAST
         call    STK_FETCH       ; routine STK-FETCH
-        ld      h, d            ;
-        ld      l, e            ;
-        dec     c               ;
-        ret     m               ;
+                                ; DE=address of name, BC=size of string
+        ld      hl, de          ; HL=address
+        dec     c               ; size--
+        ret     m               ; Null name, return Carry set
 
-        add     hl, bc          ;
-        set     7, (hl)         ;
+        add     hl, bc          ; Point to last character
+        set     7, (hl)         ; Invert it
         ret                     ;
 
 ; -------------------------
@@ -1957,24 +1968,26 @@ DISPLAY_6:
         ld      (X_PTR), hl     ; sv X_PTR_lo
 
         ld      hl, CDFLAG      ; system variable CDFLAG
-        bit     7, (hl)         ;
+        bit     7, (hl)         ; 0=fast mode
 
-        call    z, DISPLAY_1    ; routine DISPLAY-1
+        call    z, DISPLAY_1    ; routine DISPLAY-1, show display if FAST
 
 SLOW_DISP:
-        bit     0, (hl)         ;
-        jr      z, SLOW_DISP    ; to SLOW-DISP
+        bit     0, (hl)         ; bit 0 is set if key available
+        jr      z, SLOW_DISP    ; to SLOW-DISP if no key available
 
         ld      bc, (LAST_K)    ; sv LAST_K
-        call    DEBOUNCE        ; routine DEBOUNCE
+        call    DEBOUNCE        ; routine DEBOUNCE;
+                                ; initializes DEBOUNCE to FFh and resets
+                                ; and resets bit 0 of CDFLAG
         call    DECODE          ; routine DECODE
 
-        jr      nc, LOWER       ; back to LOWER
+        jr      nc, LOWER       ; back to LOWER if no key pressed
 
 ; -------------------------------
 ; THE 'KEYBOARD DECODING' SECTION
 ; -------------------------------
-;   The decoded key value is in E and HL points to the position in the
+;   The decoded key index value is in E and HL points to the position in the
 ;   key table. D contains zero.
 
 K_DECODE:
@@ -2677,8 +2690,13 @@ NUMBER:
 ; --------------------------------
 ; THE 'KEYBOARD DECODE' SUBROUTINE
 ; --------------------------------
-;
-;
+; Input: BC = contents of LAST_K
+; B = H byte (vertical scan mask)
+; C = L byte (horizontal scan mask)
+; Output: Carry set (C=1): a valid key has been decoded.
+; HL points to a one-byte table entry containing the ZX81 key code.
+; LD A,(HL) retrieves the key code. Shifted keys are also decoded.
+; D=0, E=key index in the table
 
 DECODE:
         ld      d, $00          ;
@@ -4992,6 +5010,7 @@ BREAK_1:
 DEBOUNCE:
         res     0, (iy+CDFLAG-IY0)
                                 ; update system variable CDFLAG
+                                ; bit 0 reset, no key available
         ld      a, $FF          ;
         ld      (DB_ST), a      ; update system variable DEBOUNCE
         ret                     ; return.
