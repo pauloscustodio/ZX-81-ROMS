@@ -16,19 +16,20 @@ clean:
 
 make_proj: $(PROJ).bin $(PROJ).html
 
-$(PROJ).bin: $(PROJ).asm
-	z80asm -b -l -m $(PROJ).asm 
-	dz80c -q $(PROJ).bin $(PROJ).dump
-	dz80c -q $(PROJ).rom $(PROJ).rom.dump
-	diff -I '^;' $(PROJ).rom.dump $(PROJ).dump
+$(PROJ).bin: $(PROJ).asm Makefile
+	z88dk-z80asm -b -l -m $(PROJ).asm 
+	z88dk-dis -x $(PROJ).map $(PROJ).bin > $(PROJ).dump
+	z88dk-dis -x $(PROJ).map $(PROJ).rom > $(PROJ).rom.dump
+	dos2unix $(PROJ).dump $(PROJ).rom.dump
+	diff $(PROJ).rom.dump $(PROJ).dump
 	rm $(PROJ).rom.dump
 
-$(PROJ).asm: $(wildcard src/*.asm)
-	for i in $(wildcard src/*.asm); do perl format_asm.pl $$i; done
+$(PROJ).asm: $(wildcard src/*.asm) Makefile
+	perl format_all.pl $(wildcard src/*.asm)
 	perl -S filepp -DROM_$(PROJ) src/zx81_roms.asm -o $(PROJ).asm
 
 clean_proj:
-	rm -f $(PROJ).bin $(PROJ).asm~ $(PROJ).err $(PROJ).i $(PROJ).o $(PROJ).lis $(PROJ).map $(PROJ)*.dump *.bak src/*.bak
+	rm -f $(wildcard $(PROJ).bin $(PROJ).asm~ $(PROJ).err $(PROJ).i $(PROJ).o $(PROJ).lis $(PROJ).map $(PROJ)*.dump *.bak src/*.bak)
 
 $(PROJ).html: $(PROJ).asm format_asm.pl build_asm_html.pl
 	perl format_asm.pl     $(PROJ).asm
