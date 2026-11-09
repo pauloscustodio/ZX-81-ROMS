@@ -1551,6 +1551,8 @@ LOAD:
         rl      d               ; pick up carry
         rrc     d               ; carry now in bit 7.
 
+; DE address of file name, with bit 15=1 if file name was empty
+
 NEXT_PROG:
         call    IN_BYTE         ; routine IN-BYTE
         jr      NEXT_PROG       ; loop to NEXT-PROG
@@ -1681,7 +1683,11 @@ REPORT_D:
 ; -----------------------------
 ; THE 'PROGRAM NAME' SUBROUTINE
 ; -----------------------------
-;
+; Enters with CH_ADD pointing at the file name
+; Parses the file name, error if it is a number
+; Exits with DE=address of file name, BC=length-1, HL=addresss of last char,
+; last char inverted
+; Carry Set if file name was null
 ;
 
 NAME:
@@ -4980,8 +4986,8 @@ PAUSE:
         call    FIND_INT        ; Call FIND-INT to get the PAUSE parameter
         call    SET_FAST        ; Call SET-FAST to go into fast mode
                                 ; (but keep CDFLAG bit 6 set, indicating SLOW mode)
-        ld      h, b            ; Move PAUSE parameter into HL
-        ld      l, c            ; NB: This will be saved to FRAMES
+        ld      hl, bc          ; Move PAUSE parameter into HL
+                                ; NB: This will be saved to FRAMES
         call    DISPLAY_P       ; Call DISPLAY-P to generate display until
                                 ; FRAMES zero or a key is pressed
 
@@ -8315,7 +8321,7 @@ tbl_addrs:
         defw    multiply        ; $04 Address: $176C - multiply
         defw    division        ; $05 Address: $1882 - division
         defw    to_power        ; $06 Address: $1DE2 - to-power
-        defw    or              ; $07 Address: $1AED - or
+        defw    or_             ; $07 Address: $1AED - or
 
         defw    no_and_no       ; $08 Address: $1B03 - no-&-no
         defw    no_l_eql        ; $09 Address: $1B03 - no-l-eql
@@ -9061,7 +9067,7 @@ PF_loop:
 ; A binary operation.
 ; On entry HL points to first operand (X) and DE to second operand (Y).
 
-or:
+or_:
         ld      a, (de)         ; fetch exponent of second number
         and     a               ; test it.
         ret     z               ; return if zero.
