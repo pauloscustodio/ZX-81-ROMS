@@ -8361,7 +8361,7 @@ tbl_addrs:
         defw    multiply        ; $04 Address: $176C - multiply
         defw    division        ; $05 Address: $1882 - division
         defw    to_power        ; $06 Address: $1DE2 - to-power
-        defw    or              ; $07 Address: $1AED - or
+        defw    or_             ; $07 Address: $1AED - or
 
         defw    no_and_no       ; $08 Address: $1B03 - no-&-no
         defw    no_l_eql        ; $09 Address: $1B03 - no-l-eql
@@ -9159,7 +9159,7 @@ PF_loop:
 ; A binary operation.
 ; On entry HL points to first operand (X) and DE to second operand (Y).
 
-or:
+or_:
         ld      a, (de)         ; fetch exponent of second number
         and     a               ; test it.
         ret     z               ; return if zero.
