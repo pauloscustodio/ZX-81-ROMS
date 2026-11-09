@@ -1,0 +1,5 @@
+*.bin
+*.lis
+*.map
+*.o
+*.bak
