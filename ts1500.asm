@@ -1,3 +1,6 @@
+; =============================================================================
+; Assembly Listing of the Timex Sinclair 1500 ROM
+; =============================================================================
 ;
 ; Work in progress.
 ; This file will cross-assemble an original version of the "Improved"
@@ -5006,9 +5009,8 @@ PAUSE:
         call    DISPLAY_P       ; Call DISPLAY-P to generate display until
                                 ; FRAMES zero or a key is pressed
 
-
-; In edition 2 ROM, rewritten PAUSE routine to ensure bit 15 of FRAMES set.
-
+; In edition 3 ROM, rewritten PAUSE routine to ensure new frame does not get 
+; FRAMES to zero
         ld      (iy+FRAMES+1-IY0), $FF
                                 ; Set high byte of FRAMES to make sure a
                                 ; new frame does not get FRAMES to zero

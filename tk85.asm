@@ -1,6 +1,6 @@
-; ===========================================================
-; An Assembly Listing of the Operating System of the TK85 ROM
-; ===========================================================
+; =============================================================================
+; Assembly Listing of the Operating System of the TK85 ROM
+; =============================================================================
 ;
 ; Work in progress.
 ; This file will cross-assemble an original version of the "Improved"

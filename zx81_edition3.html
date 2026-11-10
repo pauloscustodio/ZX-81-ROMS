@@ -1,7 +1,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<title>zx81.asm</title>
+<title>build/zx81_edition3.asm</title>
 <style>
 *{
 	font-family: Courier New;
@@ -10,9 +10,9 @@
 </style>
 </head>
 <body bgcolor="#FFFFFF">
-;&nbsp;<b>================================================================================</b>
-<br>;&nbsp;An&nbsp;Assembly&nbsp;Listing&nbsp;of&nbsp;the&nbsp;Operating&nbsp;System&nbsp;of&nbsp;the&nbsp;ZX81&nbsp;version&nbsp;2&nbsp;(improved)&nbsp;ROM
-<br>;&nbsp;<b>================================================================================</b>
+;&nbsp;<b>=============================================================================</b>
+<br>;&nbsp;Assembly&nbsp;Listing&nbsp;of&nbsp;the&nbsp;Operating&nbsp;System&nbsp;of&nbsp;the&nbsp;ZX81&nbsp;edition&nbsp;3&nbsp;(improved)&nbsp;ROM
+<br>;&nbsp;<b>=============================================================================</b>
 <br>;
 <br>;&nbsp;Work&nbsp;in&nbsp;progress.
 <br>;&nbsp;This&nbsp;file&nbsp;will&nbsp;cross-assemble&nbsp;an&nbsp;original&nbsp;version&nbsp;of&nbsp;the&nbsp;&quot;Improved&quot;
@@ -5008,9 +5008,8 @@
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call&nbsp;&nbsp;&nbsp;&nbsp;<a href="#DISPLAY_P">DISPLAY_P</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Call&nbsp;DISPLAY-P&nbsp;to&nbsp;generate&nbsp;display&nbsp;until
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;<a href="#FRAMES">FRAMES</a>&nbsp;zero&nbsp;or&nbsp;a&nbsp;key&nbsp;is&nbsp;pressed
 <br>
-<br>
-<br>;&nbsp;In&nbsp;edition&nbsp;2&nbsp;ROM,&nbsp;rewritten&nbsp;<a href="#PAUSE">PAUSE</a>&nbsp;routine&nbsp;to&nbsp;ensure&nbsp;bit&nbsp;15&nbsp;of&nbsp;<a href="#FRAMES">FRAMES</a>&nbsp;set.
-<br>
+<br>;&nbsp;In&nbsp;edition&nbsp;3&nbsp;ROM,&nbsp;rewritten&nbsp;<a href="#PAUSE">PAUSE</a>&nbsp;routine&nbsp;to&nbsp;ensure&nbsp;new&nbsp;frame&nbsp;does&nbsp;<a href="#not">not</a>&nbsp;get&nbsp;
+<br>;&nbsp;<a href="#FRAMES">FRAMES</a>&nbsp;to&nbsp;zero
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ld&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(iy+<a href="#FRAMES">FRAMES</a>+1-<a href="#IY0">IY0</a>),&nbsp;<b>$FF</b>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Set&nbsp;high&nbsp;byte&nbsp;of&nbsp;<a href="#FRAMES">FRAMES</a>&nbsp;to&nbsp;make&nbsp;sure&nbsp;a
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;new&nbsp;frame&nbsp;does&nbsp;<a href="#not">not</a>&nbsp;get&nbsp;<a href="#FRAMES">FRAMES</a>&nbsp;to&nbsp;zero

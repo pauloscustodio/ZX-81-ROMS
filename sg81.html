@@ -1,7 +1,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<title>sg81.asm</title>
+<title>build/sg81.asm</title>
 <style>
 *{
 	font-family: Courier New;
@@ -10,9 +10,9 @@
 </style>
 </head>
 <body bgcolor="#FFFFFF">
-;&nbsp;<b>=========================================================</b>
-<br>;&nbsp;An&nbsp;Assembly&nbsp;Listing&nbsp;of&nbsp;the&nbsp;&quot;Shoulders&nbsp;of&nbsp;Giants&quot;&nbsp;ZX81&nbsp;ROM
-<br>;&nbsp;<b>=========================================================</b>
+;&nbsp;<b>=============================================================================</b>
+<br>;&nbsp;Assembly&nbsp;Listing&nbsp;of&nbsp;the&nbsp;&quot;Shoulders&nbsp;of&nbsp;Giants&quot;&nbsp;ZX81&nbsp;ROM
+<br>;&nbsp;<b>=============================================================================</b>
 <br>;
 <br>;&nbsp;&nbsp;&nbsp;The&nbsp;&quot;Shoulders&nbsp;of&nbsp;Giants&quot;&nbsp;ZX81&nbsp;ROM.
 <br>;&nbsp;&nbsp;&nbsp;This&nbsp;file&nbsp;shows&nbsp;the&nbsp;altered&nbsp;sections&nbsp;of&nbsp;the&nbsp;ZX81/TS1000&nbsp;ROM&nbsp;that&nbsp;produced
@@ -5031,9 +5031,8 @@
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call&nbsp;&nbsp;&nbsp;&nbsp;<a href="#DISPLAY_P">DISPLAY_P</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Call&nbsp;DISPLAY-P&nbsp;to&nbsp;generate&nbsp;display&nbsp;until
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;<a href="#FRAMES">FRAMES</a>&nbsp;zero&nbsp;or&nbsp;a&nbsp;key&nbsp;is&nbsp;pressed
 <br>
-<br>
-<br>;&nbsp;In&nbsp;edition&nbsp;2&nbsp;ROM,&nbsp;rewritten&nbsp;<a href="#PAUSE">PAUSE</a>&nbsp;routine&nbsp;to&nbsp;ensure&nbsp;bit&nbsp;15&nbsp;of&nbsp;<a href="#FRAMES">FRAMES</a>&nbsp;set.
-<br>
+<br>;&nbsp;In&nbsp;edition&nbsp;3&nbsp;ROM,&nbsp;rewritten&nbsp;<a href="#PAUSE">PAUSE</a>&nbsp;routine&nbsp;to&nbsp;ensure&nbsp;new&nbsp;frame&nbsp;does&nbsp;<a href="#not">not</a>&nbsp;get&nbsp;
+<br>;&nbsp;<a href="#FRAMES">FRAMES</a>&nbsp;to&nbsp;zero
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ld&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(iy+<a href="#FRAMES">FRAMES</a>+1-<a href="#IY0">IY0</a>),&nbsp;<b>$FF</b>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Set&nbsp;high&nbsp;byte&nbsp;of&nbsp;<a href="#FRAMES">FRAMES</a>&nbsp;to&nbsp;make&nbsp;sure&nbsp;a
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;new&nbsp;frame&nbsp;does&nbsp;<a href="#not">not</a>&nbsp;get&nbsp;<a href="#FRAMES">FRAMES</a>&nbsp;to&nbsp;zero

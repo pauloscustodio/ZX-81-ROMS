@@ -1,36 +1,37 @@
-CALL_MAKE = $(MAKE) --no-print-directory
+# build the ROMs documentation, assemble and compare the binaries
+
+ROMS = zx81_edition1 zx81_edition2 zx81_edition3 tk85 sg81 ts1500
 
 all: 
-	@$(CALL_MAKE) PROJ=zx81   make_proj
-	@$(CALL_MAKE) PROJ=zx81v1 make_proj
-	@$(CALL_MAKE) PROJ=tk85   make_proj
-	@$(CALL_MAKE) PROJ=sg81   make_proj
-	@$(CALL_MAKE) PROJ=ts1500 make_proj
+	perl tools/format_all.pl $(wildcard src/*.asm)
+	perl tools/make_all.pl $(MAKE) make_proj $(ROMS)
 
 clean: 
-	@$(CALL_MAKE) PROJ=zx81   clean_proj
-	@$(CALL_MAKE) PROJ=zx81v1 clean_proj
-	@$(CALL_MAKE) PROJ=tk85   clean_proj
-	@$(CALL_MAKE) PROJ=sg81   clean_proj
-	@$(CALL_MAKE) PROJ=ts1500 clean_proj
+	perl tools/make_all.pl $(MAKE) clean_proj $(ROMS)
+	$(RM) -r build
 
-make_proj: $(PROJ).bin $(PROJ).html
+make_proj: build/$(PROJ).bin $(PROJ).html
 
-$(PROJ).bin: $(PROJ).asm Makefile
-	z88dk-z80asm -b -l -m $(PROJ).asm 
-	z88dk-dis -x $(PROJ).map $(PROJ).bin > $(PROJ).dump
-	z88dk-dis -x $(PROJ).map $(PROJ).rom > $(PROJ).rom.dump
-	dos2unix $(PROJ).dump $(PROJ).rom.dump
-	diff $(PROJ).rom.dump $(PROJ).dump
-	rm $(PROJ).rom.dump
+build/$(PROJ).bin: build/$(PROJ).asm Makefile build
+	z88dk-z80asm -b -l -m build/$(PROJ).asm
+	z88dk-dis -x build/$(PROJ).map build/$(PROJ).bin > build/$(PROJ).asm.dump
+	z88dk-dis -x build/$(PROJ).map       $(PROJ).rom > build/$(PROJ).rom.dump
+	dos2unix build/$(PROJ).asm.dump build/$(PROJ).rom.dump
+	diff build/$(PROJ).rom.dump build/$(PROJ).asm.dump
 
-$(PROJ).asm: $(wildcard src/*.asm) Makefile
-	perl format_all.pl $(wildcard src/*.asm)
-	perl -S filepp -DROM_$(PROJ) src/zx81_roms.asm -o $(PROJ).asm
+build/$(PROJ).asm: $(wildcard src/*.asm) \
+					tools/format_asm.pl tools/format_all.pl Makefile build
+	perl -S filepp -DROM_$(PROJ) src/zx81_roms.asm -o build/$(PROJ).asm
 
 clean_proj:
-	rm -f $(wildcard $(PROJ).bin $(PROJ).asm~ $(PROJ).err $(PROJ).i $(PROJ).o $(PROJ).lis $(PROJ).map $(PROJ)*.dump *.bak src/*.bak)
+	$(RM) $(wildcard *.bak src/*.bak tools/*.bak)
 
-$(PROJ).html: $(PROJ).asm format_asm.pl build_asm_html.pl
-	perl format_asm.pl     $(PROJ).asm
-	perl build_asm_html.pl $(PROJ).asm
+$(PROJ).html: build/$(PROJ).asm \
+					tools/format_asm.pl tools/build_asm_html.pl Makefile
+	perl tools/format_asm.pl     build/$(PROJ).asm
+	perl tools/build_asm_html.pl build/$(PROJ).asm
+	cp build/$(PROJ).html $(PROJ).html
+	cp build/$(PROJ).asm  $(PROJ).asm
+
+build:
+	mkdir $@

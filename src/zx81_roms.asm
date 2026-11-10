@@ -4,36 +4,45 @@
 ; input constants defining which ROM to generate.
 ;
 ; Constants:
-;       ROM_zx81    ZX-81 version 2 (improved) ROM
-;       ROM_zx81v1  ZX-81 version 1 (buggy) ROM
-;       ROM_tk85    TK-85 ROM
-;       ROM_sg81    ZX-81 "Shoulder of Giants" ROM
-;       ROM_ts1500  Timex Sinclair 1500 ROM
+;       ROM_zx81_edition1   ZX-81 version 1 (buggy) ROM
+;       ROM_zx81_edition2   ZX-81 version 2 (buggy) ROM
+;       ROM_zx81_edition3   ZX-81 version 3 (improved) ROM
+;       ROM_tk85            TK-85 ROM
+;       ROM_sg81            ZX-81 "Shoulder of Giants" ROM
+;       ROM_ts1500          Timex Sinclair 1500 ROM
 ; *****************************************************************************
 
 #endif
-#ifdef ROM_zx81
-; ================================================================================
-; An Assembly Listing of the Operating System of the ZX81 version 2 (improved) ROM
-; ================================================================================
-#endif
-#ifdef ROM_zx81v1
+#ifdef ROM_zx81_edition1
 ; =============================================================================
-; An Assembly Listing of the Operating System of the ZX81 version 1 (buggy) ROM
+; Assembly Listing of the Operating System of the ZX81 edition 1 (buggy) ROM
+; =============================================================================
+#endif
+#ifdef ROM_zx81_edition2
+; =============================================================================
+; Assembly Listing of the Operating System of the ZX81 edition 2 (buggy) ROM
+; =============================================================================
+#endif
+#ifdef ROM_zx81_edition3
+; =============================================================================
+; Assembly Listing of the Operating System of the ZX81 edition 3 (improved) ROM
 ; =============================================================================
 #endif
 #ifdef ROM_tk85
-; ===========================================================
-; An Assembly Listing of the Operating System of the TK85 ROM
-; ===========================================================
+; =============================================================================
+; Assembly Listing of the Operating System of the TK85 ROM
+; =============================================================================
 #endif
-#ifdef ROM_zx81v1
-#define ROM_zx81
+#ifdef ROM_zx81_edition1
+#define ROM_zx81_edition3
+#endif
+#ifdef ROM_zx81_edition2
+#define ROM_zx81_edition3
 #endif
 #ifdef ROM_sg81
-; =========================================================
-; An Assembly Listing of the "Shoulders of Giants" ZX81 ROM
-; =========================================================
+; =============================================================================
+; Assembly Listing of the "Shoulders of Giants" ZX81 ROM
+; =============================================================================
 ;
 ;   The "Shoulders of Giants" ZX81 ROM.
 ;   This file shows the altered sections of the ZX81/TS1000 ROM that produced
@@ -58,6 +67,11 @@
 ;   Using uncompressed constants rectifies a logic error and improves speed.
 ;
 ;
+#endif
+#ifdef ROM_ts1500
+; =============================================================================
+; Assembly Listing of the Timex Sinclair 1500 ROM
+; =============================================================================
 #endif
 ;
 ; Work in progress.
@@ -4852,7 +4866,7 @@ INPUT:
                                 ; Test high byte of PPC for line number
         jr      nz, REPORT_8    ; REPORT-8 (Input must have line number)
 
-#ifndef ROM_zx81v1
+#ifndef ROM_zx81_edition1
 
 ; In edition 2 ROM, a new CALL instruction added to clear the workspace
 ; during the INPUT routine
@@ -4943,19 +4957,25 @@ PAUSE:
                                 ; Set high byte of FRAMES to make sure a
                                 ; new frame does not get FRAMES to zero
 #else
-#ifdef ROM_zx81v1
+#ifdef ROM_zx81_edition1
         call    SLOW_FAST       ; Call SLOW/FAST to re-enter "normal" slow mode
         set     7, (iy+$35)     ; Sets the top bit (bit 15) of FRAMES
                                 ; to indicate not in PAUSE
 #else
-
-; In edition 2 ROM, rewritten PAUSE routine to ensure bit 15 of FRAMES set.
-
+#ifdef ROM_zx81_edition2
+; In edition 2 ROM, rewritten PAUSE routine to set high byte of FRAMES to $FF
+        call    SLOW_FAST       ; Call SLOW/FAST to re-enter "normal" slow mode
+        ld      (iy+$35), $FF   ; Set high byte of FRAMES to $FF
+                                ; to indicate not in PAUSE
+#else
+; In edition 3 ROM, rewritten PAUSE routine to ensure new frame does not get 
+; FRAMES to zero
         ld      (iy+FRAMES+1-IY0), $FF
                                 ; Set high byte of FRAMES to make sure a
                                 ; new frame does not get FRAMES to zero
 
         call    SLOW_FAST       ; Call SLOW/FAST to re-enter "normal" slow mode
+#endif
 #endif
 #endif
         jr      DEBOUNCE        ; routine DEBOUNCE
@@ -5236,7 +5256,7 @@ S_LTR_DGT:
         call    z, STK_VAR      ; routine STK-VAR stacks string parameters or
                                 ; returns cell location if numeric.
 
-#ifdef ROM_zx81v1
+#ifdef ROM_zx81_edition1
         bit     6, (iy+FLAGS-IY0)
                                 ; IY=4000H
         jr      z, S_CONT_2     ; Jump to S-CONT-2 to continue processing
@@ -7530,7 +7550,7 @@ ADDEND_0:
         exx                     ; select alternate set for more significant
                                 ; bytes.
 
-#ifdef ROM_zx81v1
+#ifdef ROM_zx81_edition1
         ld      a, h
         sub     l
         ld      h, a

@@ -1,6 +1,6 @@
-; ================================================================================
-; An Assembly Listing of the Operating System of the ZX81 version 2 (improved) ROM
-; ================================================================================
+; =============================================================================
+; Assembly Listing of the Operating System of the ZX81 edition 1 (buggy) ROM
+; =============================================================================
 ;
 ; Work in progress.
 ; This file will cross-assemble an original version of the "Improved"
@@ -4915,11 +4915,6 @@ INPUT:
         jr      nz, REPORT_8    ; REPORT-8 (Input must have line number)
 
 
-; In edition 2 ROM, a new CALL instruction added to clear the workspace
-; during the INPUT routine
-
-        call    X_TEMP          ; Call X-TEMP to clears the workspace
-
         ld      hl, FLAGX       ; FLAGX
         set     5, (hl)         ; Set INPUT mode
         res     6, (hl)         ; to string
@@ -4996,14 +4991,9 @@ PAUSE:
         call    DISPLAY_P       ; Call DISPLAY-P to generate display until
                                 ; FRAMES zero or a key is pressed
 
-
-; In edition 2 ROM, rewritten PAUSE routine to ensure bit 15 of FRAMES set.
-
-        ld      (iy+FRAMES+1-IY0), $FF
-                                ; Set high byte of FRAMES to make sure a
-                                ; new frame does not get FRAMES to zero
-
         call    SLOW_FAST       ; Call SLOW/FAST to re-enter "normal" slow mode
+        set     7, (iy+$35)     ; Sets the top bit (bit 15) of FRAMES
+                                ; to indicate not in PAUSE
         jr      DEBOUNCE        ; routine DEBOUNCE
 
 ; ----------------------
@@ -5282,14 +5272,10 @@ S_LTR_DGT:
         call    z, STK_VAR      ; routine STK-VAR stacks string parameters or
                                 ; returns cell location if numeric.
 
-
-; In Edition 2 ROM, rewritten numeric processing routine to cater for
-; syntax checking.
-
-        ld      a, (FLAGS)      ; Fetch the value of FLAGS
-        cp      $C0             ; Test bit 6 & 7 together
-        jr      c, S_CONT_2     ; Jump to S-CONT-2 to continue processing if
-                                ; not a number and/or are syntax checking
+        bit     6, (iy+FLAGS-IY0)
+                                ; IY=4000H
+        jr      z, S_CONT_2     ; Jump to S-CONT-2 to continue processing
+                                ; if not a number
 
         inc     hl              ; A numeric value is to be stacked during
                                 ; line execution
@@ -7548,6 +7534,9 @@ ADDEND_0:
         exx                     ; select alternate set for more significant
                                 ; bytes.
 
+        ld      a, h
+        sub     l
+        ld      h, a
 
 ; In Edition 2 ROM, deleted spurious instructions causing floating point bug
 
