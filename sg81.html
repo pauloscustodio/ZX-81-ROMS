@@ -2734,6 +2734,7 @@
 <br>;&nbsp;Input:&nbsp;BC&nbsp;=&nbsp;contents&nbsp;of&nbsp;<a href="#LAST_K">LAST_K</a>
 <br>;&nbsp;B&nbsp;=&nbsp;H&nbsp;byte&nbsp;(vertical&nbsp;scan&nbsp;mask)
 <br>;&nbsp;C&nbsp;=&nbsp;L&nbsp;byte&nbsp;(horizontal&nbsp;scan&nbsp;mask)
+<br>;&nbsp;BC&nbsp;cannot&nbsp;be&nbsp;<b>$FFFF</b>;&nbsp;if&nbsp;yes,&nbsp;the&nbsp;routine&nbsp;enters&nbsp;an&nbsp;endless&nbsp;loop.
 <br>;&nbsp;Output:&nbsp;Carry&nbsp;set&nbsp;(C=1):&nbsp;a&nbsp;valid&nbsp;key&nbsp;has&nbsp;been&nbsp;decoded.
 <br>;&nbsp;HL&nbsp;points&nbsp;to&nbsp;a&nbsp;one-byte&nbsp;table&nbsp;entry&nbsp;containing&nbsp;the&nbsp;ZX81&nbsp;key&nbsp;<a href="#code">code</a>.
 <br>;&nbsp;LD&nbsp;A,(HL)&nbsp;retrieves&nbsp;the&nbsp;key&nbsp;<a href="#code">code</a>.&nbsp;Shifted&nbsp;keys&nbsp;are&nbsp;also&nbsp;decoded.

@@ -2699,6 +2699,7 @@ NUMBER:
 ; Input: BC = contents of LAST_K
 ; B = H byte (vertical scan mask)
 ; C = L byte (horizontal scan mask)
+; BC cannot be $FFFF; if yes, the routine enters an endless loop.
 ; Output: Carry set (C=1): a valid key has been decoded.
 ; HL points to a one-byte table entry containing the ZX81 key code.
 ; LD A,(HL) retrieves the key code. Shifted keys are also decoded.
