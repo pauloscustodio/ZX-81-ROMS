@@ -1356,6 +1356,27 @@ DISPLAY_5:
 ; The keyboard is read during the vertical sync interval while no video is
 ; being displayed.  Reading a port with address bit 0 low i.e. $FE starts the
 ; vertical sync pulse.
+;
+; Returns:
+; H = high byte (column scan mask)
+;       %11111111   no key pressed
+;       %11111110   column 0 - shift key pressed
+;       %11111101   column 1 - Space Enter P 0 1 Q A - key pressed
+;       %11111011   column 2 - . L O 9 2 W S Z - key pressed
+;       %11110111   column 3 - M K I 8 3 E D X - key pressed
+;       %11101111   column 4 - N J U 7 4 R F C - key pressed
+;       %11011111   column 5 - B H Y 6 5 T G V - key pressed
+;
+; C = low  byte (section scan mask)
+;       %11111111   no key pressed
+;       %11111110   section 0 - Z X C V - key pressed
+;       %11111101   section 1 - A S D F G - key pressed
+;       %11111011   section 2 - Q W E R T - key pressed
+;       %11110111   section 3 - 1 2 3 4 5 - key pressed
+;       %11101111   section 4 - 6 7 8 9 0 - key pressed
+;       %11011111   section 5 - Y U I O P - key pressed
+;       %10111111   section 6 - H J K L Enter - key pressed
+;       %01111111   section 7 - B N M . Space - key pressed
 
 KEYBOARD:
         ld      hl, $FFFF       ; (16) prepare a buffer to take key.
@@ -2710,8 +2731,8 @@ NUMBER:
 ; THE 'KEYBOARD DECODE' SUBROUTINE
 ; --------------------------------
 ; Input: BC = contents of LAST_K
-; B = H byte (vertical scan mask)
-; C = L byte (horizontal scan mask)
+; B = high byte (column scan mask)
+; C = low  byte (section scan mask)
 ; DECODE loops forever if B=$FF or C=$FF
 ; Output: Carry set (C=1): a valid key has been decoded.
 ; HL points to a one-byte table entry containing the ZX81 key code.
@@ -5010,7 +5031,7 @@ PAUSE:
         call    DISPLAY_P       ; Call DISPLAY-P to generate display until
                                 ; FRAMES zero or a key is pressed
 
-; In edition 3 ROM, rewritten PAUSE routine to ensure new frame does not get 
+; In edition 3 ROM, rewritten PAUSE routine to ensure new frame does not get
 ; FRAMES to zero
         ld      (iy+FRAMES+1-IY0), $FF
                                 ; Set high byte of FRAMES to make sure a

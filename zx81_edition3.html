@@ -1368,6 +1368,27 @@
 <br>;&nbsp;The&nbsp;keyboard&nbsp;is&nbsp;read&nbsp;during&nbsp;the&nbsp;vertical&nbsp;sync&nbsp;interval&nbsp;while&nbsp;no&nbsp;video&nbsp;is
 <br>;&nbsp;being&nbsp;displayed.&nbsp;&nbsp;Reading&nbsp;a&nbsp;port&nbsp;with&nbsp;address&nbsp;bit&nbsp;0&nbsp;low&nbsp;i.e.&nbsp;<b>$FE</b>&nbsp;starts&nbsp;the
 <br>;&nbsp;vertical&nbsp;sync&nbsp;pulse.
+<br>;
+<br>;&nbsp;Returns:
+<br>;&nbsp;H&nbsp;=&nbsp;high&nbsp;byte&nbsp;(column&nbsp;scan&nbsp;mask)
+<br>;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%11111111&nbsp;&nbsp;&nbsp;no&nbsp;key&nbsp;pressed
+<br>;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%11111110&nbsp;&nbsp;&nbsp;column&nbsp;0&nbsp;-&nbsp;shift&nbsp;key&nbsp;pressed
+<br>;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%11111101&nbsp;&nbsp;&nbsp;column&nbsp;1&nbsp;-&nbsp;Space&nbsp;Enter&nbsp;P&nbsp;0&nbsp;1&nbsp;Q&nbsp;A&nbsp;-&nbsp;key&nbsp;pressed
+<br>;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%11111011&nbsp;&nbsp;&nbsp;column&nbsp;2&nbsp;-&nbsp;.&nbsp;L&nbsp;O&nbsp;9&nbsp;2&nbsp;W&nbsp;S&nbsp;Z&nbsp;-&nbsp;key&nbsp;pressed
+<br>;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%11110111&nbsp;&nbsp;&nbsp;column&nbsp;3&nbsp;-&nbsp;M&nbsp;K&nbsp;I&nbsp;8&nbsp;3&nbsp;E&nbsp;D&nbsp;X&nbsp;-&nbsp;key&nbsp;pressed
+<br>;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%11101111&nbsp;&nbsp;&nbsp;column&nbsp;4&nbsp;-&nbsp;N&nbsp;J&nbsp;U&nbsp;7&nbsp;4&nbsp;R&nbsp;F&nbsp;C&nbsp;-&nbsp;key&nbsp;pressed
+<br>;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%11011111&nbsp;&nbsp;&nbsp;column&nbsp;5&nbsp;-&nbsp;B&nbsp;H&nbsp;Y&nbsp;6&nbsp;5&nbsp;T&nbsp;G&nbsp;V&nbsp;-&nbsp;key&nbsp;pressed
+<br>;
+<br>;&nbsp;C&nbsp;=&nbsp;low&nbsp;&nbsp;byte&nbsp;(section&nbsp;scan&nbsp;mask)
+<br>;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%11111111&nbsp;&nbsp;&nbsp;no&nbsp;key&nbsp;pressed
+<br>;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%11111110&nbsp;&nbsp;&nbsp;section&nbsp;0&nbsp;-&nbsp;Z&nbsp;X&nbsp;C&nbsp;V&nbsp;-&nbsp;key&nbsp;pressed
+<br>;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%11111101&nbsp;&nbsp;&nbsp;section&nbsp;1&nbsp;-&nbsp;A&nbsp;S&nbsp;D&nbsp;F&nbsp;G&nbsp;-&nbsp;key&nbsp;pressed
+<br>;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%11111011&nbsp;&nbsp;&nbsp;section&nbsp;2&nbsp;-&nbsp;Q&nbsp;W&nbsp;E&nbsp;R&nbsp;T&nbsp;-&nbsp;key&nbsp;pressed
+<br>;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%11110111&nbsp;&nbsp;&nbsp;section&nbsp;3&nbsp;-&nbsp;1&nbsp;2&nbsp;3&nbsp;4&nbsp;5&nbsp;-&nbsp;key&nbsp;pressed
+<br>;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%11101111&nbsp;&nbsp;&nbsp;section&nbsp;4&nbsp;-&nbsp;6&nbsp;7&nbsp;8&nbsp;9&nbsp;0&nbsp;-&nbsp;key&nbsp;pressed
+<br>;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%11011111&nbsp;&nbsp;&nbsp;section&nbsp;5&nbsp;-&nbsp;Y&nbsp;U&nbsp;I&nbsp;O&nbsp;P&nbsp;-&nbsp;key&nbsp;pressed
+<br>;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%10111111&nbsp;&nbsp;&nbsp;section&nbsp;6&nbsp;-&nbsp;H&nbsp;J&nbsp;K&nbsp;L&nbsp;Enter&nbsp;-&nbsp;key&nbsp;pressed
+<br>;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%01111111&nbsp;&nbsp;&nbsp;section&nbsp;7&nbsp;-&nbsp;B&nbsp;N&nbsp;M&nbsp;.&nbsp;Space&nbsp;-&nbsp;key&nbsp;pressed
 <br>
 <br><a name="KEYBOARD"></a><a href="#KEYBOARD">KEYBOARD</a>:
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ld&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hl,&nbsp;<b>$FFFF</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;(16)&nbsp;prepare&nbsp;a&nbsp;buffer&nbsp;to&nbsp;take&nbsp;key.
@@ -2709,8 +2730,8 @@
 <br>;&nbsp;THE&nbsp;&#39;<a href="#KEYBOARD">KEYBOARD</a>&nbsp;<a href="#DECODE">DECODE</a>&#39;&nbsp;SUBROUTINE
 <br>;&nbsp;<b>--------------------------------</b>
 <br>;&nbsp;Input:&nbsp;BC&nbsp;=&nbsp;contents&nbsp;of&nbsp;<a href="#LAST_K">LAST_K</a>
-<br>;&nbsp;B&nbsp;=&nbsp;H&nbsp;byte&nbsp;(vertical&nbsp;scan&nbsp;mask)
-<br>;&nbsp;C&nbsp;=&nbsp;L&nbsp;byte&nbsp;(horizontal&nbsp;scan&nbsp;mask)
+<br>;&nbsp;B&nbsp;=&nbsp;high&nbsp;byte&nbsp;(column&nbsp;scan&nbsp;mask)
+<br>;&nbsp;C&nbsp;=&nbsp;low&nbsp;&nbsp;byte&nbsp;(section&nbsp;scan&nbsp;mask)
 <br>;&nbsp;<a href="#DECODE">DECODE</a>&nbsp;loops&nbsp;forever&nbsp;if&nbsp;B=<b>$FF</b>&nbsp;or&nbsp;C=<b>$FF</b>
 <br>;&nbsp;Output:&nbsp;Carry&nbsp;set&nbsp;(C=1):&nbsp;a&nbsp;valid&nbsp;key&nbsp;has&nbsp;been&nbsp;decoded.
 <br>;&nbsp;HL&nbsp;points&nbsp;to&nbsp;a&nbsp;one-byte&nbsp;table&nbsp;entry&nbsp;containing&nbsp;the&nbsp;ZX81&nbsp;key&nbsp;<a href="#code">code</a>.
@@ -5009,7 +5030,7 @@
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;call&nbsp;&nbsp;&nbsp;&nbsp;<a href="#DISPLAY_P">DISPLAY_P</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Call&nbsp;DISPLAY-P&nbsp;to&nbsp;generate&nbsp;display&nbsp;until
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;<a href="#FRAMES">FRAMES</a>&nbsp;zero&nbsp;or&nbsp;a&nbsp;key&nbsp;is&nbsp;pressed
 <br>
-<br>;&nbsp;In&nbsp;edition&nbsp;3&nbsp;ROM,&nbsp;rewritten&nbsp;<a href="#PAUSE">PAUSE</a>&nbsp;routine&nbsp;to&nbsp;ensure&nbsp;new&nbsp;frame&nbsp;does&nbsp;<a href="#not">not</a>&nbsp;get&nbsp;
+<br>;&nbsp;In&nbsp;edition&nbsp;3&nbsp;ROM,&nbsp;rewritten&nbsp;<a href="#PAUSE">PAUSE</a>&nbsp;routine&nbsp;to&nbsp;ensure&nbsp;new&nbsp;frame&nbsp;does&nbsp;<a href="#not">not</a>&nbsp;get
 <br>;&nbsp;<a href="#FRAMES">FRAMES</a>&nbsp;to&nbsp;zero
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ld&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(iy+<a href="#FRAMES">FRAMES</a>+1-<a href="#IY0">IY0</a>),&nbsp;<b>$FF</b>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Set&nbsp;high&nbsp;byte&nbsp;of&nbsp;<a href="#FRAMES">FRAMES</a>&nbsp;to&nbsp;make&nbsp;sure&nbsp;a
